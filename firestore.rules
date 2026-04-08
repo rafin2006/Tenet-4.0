@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: progress
+    // Document ID: userId (matches request.auth.uid)
+    // Fields:
+    //   - completedTasks: list of strings (required) - Array of completed task IDs
+    //   - updatedAt: timestamp (required) - Timestamp of the last update
+    //
+    // ===============================================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+       return request.auth != null;
+    }
+
+    // Check if user owns the resource
+    function isOwner(userId) {
+       return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Validate UserProgress data
+    function isValidProgress(data) {
+      return data.keys().hasOnly(['completedTasks', 'updatedAt']) &&
+             data.completedTasks is list &&
+             data.completedTasks.size() <= 1000 && // reasonable limit
+             data.updatedAt is timestamp;
+    }
+
+    match /progress/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidProgress(request.resource.data);
+      allow update: if isOwner(userId) && isValidProgress(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "entities": {
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "Tracks the completed academic tasks for a user.",
+      "type": "object",
+      "properties": {
+        "completedTasks": {
+          "type": "array",
+          "description": "Array of completed task IDs in the format 'day-subjectIndex' (e.g., '1-0').",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the last update."
+        }
+      },
+      "required": ["completedTasks", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/progress/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProgress"
+      },
+      "description": "Stores progress data for each user, keyed by their Firebase Auth UID."
+    }
+  }
+}
