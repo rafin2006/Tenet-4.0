@@ -1,5 +1,5 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Tenet 4.0 Academic Tracker",
+  "description": "A dynamic academic progress tracker for HSC 26 students with Firebase authentication and real-time sync.",
   "requestFramePermissions": []
 }
