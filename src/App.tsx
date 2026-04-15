@@ -214,7 +214,7 @@ export default function App() {
           <div className="inline-block text-[0.8rem] font-extrabold tracking-[4px] uppercase text-[#38bdf8] border border-[rgba(56,189,248,0.3)] px-4 py-1 rounded-full mb-2.5 bg-[rgba(56,189,248,0.06)]">
             HSC 26
           </div>
-          <p className="text-[var(--muted)] text-[0.82rem] tracking-[2px] uppercase">April 10 – May 12, 2026 &nbsp;·&nbsp; 33-Day Schedule</p>
+          <p className="text-[var(--muted)] text-[0.82rem] tracking-[2px] uppercase">33-Day Schedule</p>
         </div>
         
         <div className="flex items-center gap-6">
@@ -327,9 +327,6 @@ export default function App() {
 
       {/* Calendar */}
       <div className="max-w-[1160px] mx-auto mb-11">
-        <div className="inline-block text-[0.62rem] font-extrabold tracking-[4px] uppercase text-[var(--muted)] px-4 py-2 bg-[var(--surface2)] border border-[var(--border)] rounded-lg mb-3.5">
-          ◈ April 2026
-        </div>
         <div className="grid grid-cols-[100px_1fr_1fr] sm:grid-cols-[110px_1fr_1fr_1fr] mb-2 pb-2 border-b border-[var(--border)]">
           <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
           <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
@@ -342,9 +339,6 @@ export default function App() {
       </div>
 
       <div className="max-w-[1160px] mx-auto mb-11">
-        <div className="inline-block text-[0.62rem] font-extrabold tracking-[4px] uppercase text-[var(--muted)] px-4 py-2 bg-[var(--surface2)] border border-[var(--border)] rounded-lg mb-3.5">
-          ◈ May 2026
-        </div>
         <div className="grid grid-cols-[100px_1fr_1fr] sm:grid-cols-[110px_1fr_1fr_1fr] mb-2 pb-2 border-b border-[var(--border)]">
           <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
           <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
