@@ -102,7 +102,7 @@ export default function App() {
     }
   };
 
-  // Calculate progres
+  // Calculate progress
   let totalTasks = 0;
   let doneTasks = 0;
   const subjectProgress: Record<string, { total: number; done: number }> = {};
