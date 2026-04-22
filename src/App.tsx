@@ -183,7 +183,7 @@ export default function App() {
   };
 
   const renderDay = (row: ScheduleRow) => {
-    const [day, , weekday, s1, s2, s3, isExtra] = row;
+    const [day, , , s1, s2, s3, isExtra] = row;
 
     return (
       <div key={day} className={`flex flex-col sm:flex-row bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden transition-all duration-150 hover:-translate-y-[1px] hover:border-[#2e3d60] ${isExtra ? 'border-[rgba(251,191,36,0.3)]' : ''}`}>
@@ -192,7 +192,6 @@ export default function App() {
             <div className="text-[0.95rem] font-bold">
               Day {day}
             </div>
-            <div className="text-[0.65rem] sm:text-[0.58rem] uppercase tracking-[1.5px] text-[var(--muted)]">{weekday}</div>
           </div>
           {isExtra && (
             <span className="inline-block text-[0.55rem] bg-[rgba(251,191,36,0.15)] text-[#fbbf24] px-[7px] py-[2px] rounded-[20px] font-extrabold tracking-[0.5px]">ADDED</span>
