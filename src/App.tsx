@@ -133,7 +133,7 @@ export default function App() {
   const renderCell = (entry: ScheduleEntry, day: number, subjectIndex: number) => {
     if (!entry) {
       return (
-        <div className="flex items-center justify-center p-[10px_14px] text-[1.1rem] text-[#1f2b45]">
+        <div className="flex-1 flex items-center justify-center p-[10px_14px] text-[1.1rem] text-[#1f2b45] min-h-[60px]">
           —
         </div>
       );
@@ -151,30 +151,31 @@ export default function App() {
       const url = LINKS[subjData.key]?.[chapter as number];
       if (url) {
         return (
-          <a key={chapter} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.78rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
-            <span className={`flex items-center justify-center w-4 h-4 rounded-[4px] text-[0.55rem] shrink-0 opacity-75 ${cls}`}>▶</span>
+          <a key={chapter} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.8rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
+            <span className={`flex items-center justify-center w-[18px] h-[18px] rounded-[4px] text-[0.55rem] shrink-0 opacity-75 ${cls}`}>▶</span>
             Ch.{chapter}
           </a>
         );
       }
-      return <span key={chapter} className="text-[0.78rem] font-semibold text-[var(--muted)]">Ch.{chapter}</span>;
+      return <span key={chapter} className="text-[0.8rem] font-semibold text-[var(--muted)]">Ch.{chapter}</span>;
     };
 
     return (
-      <div className={`relative flex flex-col justify-center gap-1 p-[10px_12px] border-r border-[var(--border)] transition-colors duration-200 last:border-r-0 ${isDone ? 'bg-[var(--green-bg)] border-l-2 border-l-[var(--green)]' : ''}`}>
-        <div className="flex items-center justify-between gap-[6px] mb-[2px]">
+      <div className={`flex-1 relative flex flex-col justify-center gap-2 p-3 sm:p-[10px_12px] transition-colors duration-200 ${isDone ? 'bg-[var(--green-bg)]' : ''}`}>
+        {isDone && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--green)]"></div>}
+        <div className="flex items-center justify-between gap-[6px]">
           <span className={`inline-flex items-center gap-1 px-[7px] py-[2px] rounded-[20px] text-[0.6rem] font-extrabold tracking-[0.3px] uppercase ${cls} ${isDone ? 'opacity-55' : ''}`}>
             {short}
           </span>
           <button 
             onClick={() => toggleTask(day, subjectIndex)}
-            className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 border-[1.5px] border-[var(--border)] bg-transparent text-[var(--muted)] text-[0.6rem] cursor-pointer transition-all duration-150 font-['Syne'] font-bold hover:border-[var(--green)] hover:text-[var(--green)] ${isDone ? '!bg-[var(--green)] !border-[var(--green)] !text-white' : ''}`}
-            title="Mark done"
+            className={`flex items-center justify-center w-6 h-6 rounded-full shrink-0 border-[1.5px] border-[var(--border)] bg-transparent text-[var(--muted)] text-[0.7rem] cursor-pointer transition-all duration-150 font-['Syne'] font-bold hover:border-[var(--green)] hover:text-[var(--green)] ${isDone ? '!bg-[var(--green)] !border-[var(--green)] !text-white' : ''}`}
+            title={isDone ? "Mark as pending" : "Mark as done"}
           >
             ✓
           </button>
         </div>
-        <div className={`flex flex-wrap gap-[6px] ${isDone ? 'opacity-45 line-through decoration-[rgba(34,197,94,0.4)]' : ''}`}>
+        <div className={`flex flex-wrap gap-2 ${isDone ? 'opacity-45 line-through decoration-[rgba(34,197,94,0.4)]' : ''}`}>
           {Array.isArray(ch) ? ch.map(c => renderLink(c)) : renderLink(ch)}
         </div>
       </div>
@@ -185,17 +186,23 @@ export default function App() {
     const [day, , weekday, s1, s2, s3, isExtra] = row;
 
     return (
-      <div key={day} className={`grid grid-cols-[100px_1fr_1fr] sm:grid-cols-[110px_1fr_1fr_1fr] bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden transition-all duration-150 hover:-translate-y-[1px] hover:border-[#2e3d60] ${isExtra ? 'border-[rgba(251,191,36,0.3)]' : ''}`}>
-        <div className="flex flex-col justify-center p-[12px_14px] border-r border-[var(--border)] bg-[var(--surface2)]">
-          <div className="text-[0.58rem] uppercase tracking-[1.5px] text-[var(--muted)] mb-[2px]">{weekday}</div>
-          <div className="text-[0.88rem] font-bold">
-            Day {day}
-            {isExtra && <span className="inline-block text-[0.55rem] bg-[rgba(251,191,36,0.15)] text-[#fbbf24] px-[7px] py-[2px] rounded-[20px] font-extrabold tracking-[0.5px] ml-[5px] align-middle">ADDED</span>}
+      <div key={day} className={`flex flex-col sm:flex-row bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden transition-all duration-150 hover:-translate-y-[1px] hover:border-[#2e3d60] ${isExtra ? 'border-[rgba(251,191,36,0.3)]' : ''}`}>
+        <div className="flex sm:flex-col items-center sm:justify-center justify-between p-3 sm:p-[12px_14px] w-full sm:w-[110px] bg-[var(--surface2)] border-b sm:border-b-0 sm:border-r border-[var(--border)] shrink-0">
+          <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-1">
+            <div className="text-[0.95rem] font-bold">
+              Day {day}
+            </div>
+            <div className="text-[0.65rem] sm:text-[0.58rem] uppercase tracking-[1.5px] text-[var(--muted)]">{weekday}</div>
           </div>
+          {isExtra && (
+            <span className="inline-block text-[0.55rem] bg-[rgba(251,191,36,0.15)] text-[#fbbf24] px-[7px] py-[2px] rounded-[20px] font-extrabold tracking-[0.5px]">ADDED</span>
+          )}
         </div>
-        {renderCell(s1, day, 0)}
-        {renderCell(s2, day, 1)}
-        <div className="hidden sm:block">{renderCell(s3, day, 2)}</div>
+        <div className="flex flex-col sm:flex-row flex-1 divide-y sm:divide-y-0 sm:divide-x divide-[var(--border)]">
+          {renderCell(s1, day, 0)}
+          {renderCell(s2, day, 1)}
+          {renderCell(s3, day, 2)}
+        </div>
       </div>
     );
   };
@@ -327,25 +334,25 @@ export default function App() {
 
       {/* Calendar */}
       <div className="max-w-[1160px] mx-auto mb-11">
-        <div className="grid grid-cols-[100px_1fr_1fr] sm:grid-cols-[110px_1fr_1fr_1fr] mb-2 pb-2 border-b border-[var(--border)]">
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 2</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold hidden sm:block">Subject 3</div>
+        <div className="hidden sm:flex mb-2 pb-2 border-b border-[var(--border)]">
+          <div className="w-[110px] shrink-0 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 2</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 3</div>
         </div>
-        <div className="grid gap-[7px]">
+        <div className="grid gap-[10px]">
           {aprSchedule.map(renderDay)}
         </div>
       </div>
 
       <div className="max-w-[1160px] mx-auto mb-11">
-        <div className="grid grid-cols-[100px_1fr_1fr] sm:grid-cols-[110px_1fr_1fr_1fr] mb-2 pb-2 border-b border-[var(--border)]">
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 2</div>
-          <div className="px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold hidden sm:block">Subject 3</div>
+        <div className="hidden sm:flex mb-2 pb-2 border-b border-[var(--border)]">
+          <div className="w-[110px] shrink-0 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 2</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 3</div>
         </div>
-        <div className="grid gap-[7px]">
+        <div className="grid gap-[10px]">
           {maySchedule.map(renderDay)}
         </div>
       </div>
