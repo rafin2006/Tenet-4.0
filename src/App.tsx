@@ -109,7 +109,7 @@ export default function App() {
 
   SCHEDULE.forEach((row) => {
     const day = row[0];
-    [row[3], row[4], row[5]].forEach((sub, i) => {
+    [row[1], row[2], row[3]].forEach((sub, i) => {
       if (!sub) return;
       const name = sub[0];
       const taskId = `${day}-${i}`;
@@ -139,7 +139,7 @@ export default function App() {
       );
     }
 
-    const [name, ch] = entry;
+    const [name, ch, extra] = entry;
     const subjData = SUBJ[name];
     if (!subjData) return null;
     
@@ -149,21 +149,76 @@ export default function App() {
 
     const renderLink = (chapter: number | string) => {
       const url = LINKS[subjData.key]?.[chapter as number];
+      const chLabel = typeof chapter === 'number' ? `Chapter ${chapter}` : String(chapter);
+      
       if (url) {
         return (
-          <a key={chapter} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.8rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
+          <a key={chapter} href={url as string} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.8rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
             <span className={`flex items-center justify-center w-[18px] h-[18px] rounded-[4px] text-[0.55rem] shrink-0 opacity-75 ${cls}`}>▶</span>
-            Ch.{chapter}
+            {chLabel}
           </a>
         );
       }
-      return <span key={chapter} className="text-[0.8rem] font-semibold text-[var(--muted)]">Ch.{chapter}</span>;
+      return <span key={chapter} className="text-[0.8rem] font-semibold text-[var(--muted)]">{chLabel}</span>;
     };
 
+    let contentContent = null;
+    if (Array.isArray(extra)) {
+        if (extra.length > 0 && Array.isArray(extra[0])) {
+            // Multi-link: [[label,url], ...]
+            contentContent = (
+                <div className="flex flex-col gap-1 w-full mt-1">
+                    {typeof ch === 'string' && <span className="text-[0.75rem] font-semibold text-[var(--muted)] mb-1">{ch}</span>}
+                    <div className="flex flex-wrap gap-2">
+                        {extra.map(([lbl, url], i) => (
+                           <a key={i} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.78rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
+                               <span className={`flex items-center justify-center w-[15px] h-[15px] rounded-[3px] text-[0.5rem] shrink-0 opacity-80 ${cls}`}>▶</span>
+                               {lbl}
+                           </a>
+                        ))}
+                    </div>
+                </div>
+            );
+        } else {
+            // Title list
+            contentContent = (
+                <div className="flex flex-col gap-1 w-full mt-1">
+                    {typeof ch === 'string' && <span className="text-[0.75rem] font-semibold text-[var(--muted)] mb-1">{ch}</span>}
+                    <div className="flex flex-col gap-[2px]">
+                        {extra.map((t, i) => (
+                            <div key={i} className={`text-[0.72rem] text-[var(--text)] font-medium leading-[1.4] pl-[4px] border-l-[1.5px] border-l-[rgba(255,255,255,0.1)] ${isDone ? 'opacity-40 line-through decoration-[rgba(34,197,94,0.4)]' : ''}`}>{t}</div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+    } else if (typeof extra === 'string') {
+        const chLabel = Array.isArray(ch) ? `Ch. ${ch.join('+')}` : typeof ch === 'number' ? `Chapter ${ch}` : String(ch);
+        contentContent = (
+            <div className="flex flex-wrap gap-2 mt-1">
+                <a href={extra} target="_blank" rel="noreferrer" className="inline-flex items-center gap-[5px] text-[0.78rem] font-semibold text-[var(--text)] no-underline transition-colors duration-150 hover:text-white">
+                    <span className={`flex items-center justify-center w-[15px] h-[15px] rounded-[3px] text-[0.5rem] shrink-0 opacity-80 ${cls}`}>▶</span>
+                    {chLabel}
+                </a>
+            </div>
+        );
+    } else {
+        // Standard single / multiple chapters
+        contentContent = (
+            <div className={`flex flex-wrap gap-2 mt-1 ${isDone ? 'opacity-45 line-through decoration-[rgba(34,197,94,0.4)]' : ''}`}>
+                {Array.isArray(ch) ? (
+                    <div className="flex flex-wrap gap-2">
+                        {ch.map(c => renderLink(c))}
+                    </div>
+                ) : renderLink(ch)}
+            </div>
+        );
+    }
+
     return (
-      <div className={`flex-1 relative flex flex-col justify-center gap-2 p-3 sm:p-[10px_12px] transition-colors duration-200 ${isDone ? 'bg-[var(--green-bg)]' : ''}`}>
+      <div className={`flex-1 relative flex flex-col justify-center gap-1 p-3 sm:p-[10px_12px] transition-colors duration-200 ${isDone ? 'bg-[var(--green-bg)]' : ''}`}>
         {isDone && <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--green)]"></div>}
-        <div className="flex items-center justify-between gap-[6px]">
+        <div className="flex items-center justify-between gap-[6px] mb-[2px]">
           <span className={`inline-flex items-center gap-1 px-[7px] py-[2px] rounded-[20px] text-[0.6rem] font-extrabold tracking-[0.3px] uppercase ${cls} ${isDone ? 'opacity-55' : ''}`}>
             {short}
           </span>
@@ -175,15 +230,13 @@ export default function App() {
             ✓
           </button>
         </div>
-        <div className={`flex flex-wrap gap-2 ${isDone ? 'opacity-45 line-through decoration-[rgba(34,197,94,0.4)]' : ''}`}>
-          {Array.isArray(ch) ? ch.map(c => renderLink(c)) : renderLink(ch)}
-        </div>
+        {contentContent}
       </div>
     );
   };
 
   const renderDay = (row: ScheduleRow) => {
-    const [day, , , s1, s2, s3, isExtra] = row;
+    const [day, s1, s2, s3, isExtra] = row;
 
     return (
       <div key={day} className={`flex flex-col sm:flex-row bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden transition-all duration-150 hover:-translate-y-[1px] hover:border-[#2e3d60] ${isExtra ? 'border-[rgba(251,191,36,0.3)]' : ''}`}>
@@ -206,8 +259,9 @@ export default function App() {
     );
   };
 
-  const aprSchedule = SCHEDULE.filter(r => r[1].startsWith('Apr'));
-  const maySchedule = SCHEDULE.filter(r => r[1].startsWith('May'));
+  const seg1 = SCHEDULE.filter(r => r[0] <= 21);
+  const seg2 = SCHEDULE.filter(r => r[0] >= 22 && r[0] <= 33);
+  const seg3 = SCHEDULE.filter(r => r[0] >= 34);
 
   return (
     <div className="max-w-[1160px] mx-auto">
@@ -333,6 +387,9 @@ export default function App() {
 
       {/* Calendar */}
       <div className="max-w-[1160px] mx-auto mb-11">
+        <div className="inline-block text-[0.62rem] font-extrabold tracking-[4px] uppercase text-[var(--muted)] px-4 py-2 bg-[var(--surface2)] border border-[var(--border)] rounded-lg mb-3.5 mt-2">
+          ◈ Days 1–21
+        </div>
         <div className="hidden sm:flex mb-2 pb-2 border-b border-[var(--border)]">
           <div className="w-[110px] shrink-0 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
           <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
@@ -340,11 +397,14 @@ export default function App() {
           <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 3</div>
         </div>
         <div className="grid gap-[10px]">
-          {aprSchedule.map(renderDay)}
+          {seg1.map(renderDay)}
         </div>
       </div>
 
       <div className="max-w-[1160px] mx-auto mb-11">
+        <div className="inline-block text-[0.62rem] font-extrabold tracking-[4px] uppercase text-[var(--muted)] px-4 py-2 bg-[var(--surface2)] border border-[var(--border)] rounded-lg mb-3.5 mt-2">
+          ◈ Days 22–33
+        </div>
         <div className="hidden sm:flex mb-2 pb-2 border-b border-[var(--border)]">
           <div className="w-[110px] shrink-0 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
           <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
@@ -352,7 +412,22 @@ export default function App() {
           <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 3</div>
         </div>
         <div className="grid gap-[10px]">
-          {maySchedule.map(renderDay)}
+          {seg2.map(renderDay)}
+        </div>
+      </div>
+      
+      <div className="max-w-[1160px] mx-auto mb-11">
+        <div className="inline-block text-[0.62rem] font-extrabold tracking-[4px] uppercase text-[var(--muted)] px-4 py-2 bg-[var(--surface2)] border border-[var(--border)] rounded-lg mb-3.5 mt-2">
+          ◈ Days 34–50 — Extended Schedule
+        </div>
+        <div className="hidden sm:flex mb-2 pb-2 border-b border-[var(--border)]">
+          <div className="w-[110px] shrink-0 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Day</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 1</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 2</div>
+          <div className="flex-1 px-[14px] py-[2px] text-[0.58rem] uppercase tracking-[2px] text-[var(--muted)] font-bold">Subject 3</div>
+        </div>
+        <div className="grid gap-[10px]">
+          {seg3.map(renderDay)}
         </div>
       </div>
     </div>
